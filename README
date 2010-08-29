@@ -1,0 +1,40 @@
+twLoremIpsum plugin
+======================
+
+False data generator with more-or-less normal distribution of letters
+
+When it is necessary to generate test data for performance testing, or if you need to generate data for presentation purposes this plugin can be helpfull.
+
+Example
+-------
+
+Generating 10 paragraphs
+
+        $loremipsum = new twLoremIpsum();
+        $this->paragraphs = $loremipsum->generateParagraphs(10);
+
+And in Template:
+
+        <?php foreach($paragraphs as $paragraph): ?>
+        <p><?php echo $paragraph ?></p>
+        <?php endforeach;?>
+
+
+Generating 1000 unique strings with string lenght changes from 5 to 10
+
+        $loremipsum = new twLoremIpsum();
+        $this->mystring = $loremipsum->generateUniqueStrings(1000, $max_len = 10, $min_len = 5);
+
+And in Template:
+
+        <?php foreach($mystring as $string): ?>
+        <p><?php echo $string ?></p>
+        <?php endforeach;?>
+
+
+TODO
+----
+
+  * Words generator - generating setup number of words
+  * Bytes generator - generating setup number of bytes
+  * Lists generator - generating setup number of sentences for lists
