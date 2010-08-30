@@ -3,7 +3,7 @@ twLoremIpsum plugin
 
 False data generator with more-or-less normal distribution of letters
 
-When it is necessary to generate test data for performance testing, or if you need to generate data for presentation purposes this plugin can be helpfull.
+When it is necessary to generate test data for performance testing, or if you need to generate data for presentation purposes this plugin can be helpful.
 
 Example
 -------
@@ -34,7 +34,6 @@ And in Template:
 
 TODO
 ----
-
-  * Words generator - generating setup number of words
+  * Better and complete documentation
   * Bytes generator - generating setup number of bytes
   * Lists generator - generating setup number of sentences for lists
