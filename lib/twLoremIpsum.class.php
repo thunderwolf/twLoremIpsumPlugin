@@ -14,6 +14,27 @@ class twLoremIpsum {
 	protected $sentences_data = null;
 	protected $words_data = null;
 
+	protected $sentences_data_file = 'sentences_data.json';
+	protected $words_data_file = 'words_data.json';
+
+	/**
+	 * Optional source file with sentences data
+	 *
+	 * @param string $file  Name of file in plugin data folder or full path to file
+	 */
+	public function setSentencesSourceFile($file) {
+		$this->sentences_data_file = $file;
+	}
+
+	/**
+	 * Optional source file with words data
+	 *
+	 * @param string $file  Name of file in plugin data folder or full path to file
+	 */
+	public function setWordsSourceFile($file) {
+		$this->words_data_file = $file;
+	}
+
 	/**
 	 * Unique String generator
 	 *
@@ -85,6 +106,33 @@ class twLoremIpsum {
 	}
 
 	/**
+	 * Sentence generator
+	 *
+	 * @param int $max  Maximum number of sub sentences in sentence
+	 * @param int $min  Minimum number of sub sentences in sentence
+	 * @return string
+	 */
+	public function generateSentence($max = 3, $min = 1) {
+		return $this->generateRandomSentence($max, $min);
+	}
+
+	/**
+	 * Sentences generator
+	 *
+	 * @param int $num  Number of sentenes to generate
+	 * @param int $max  Maximum number of sub sentences in sentence
+	 * @param int $min  Minimum number of sub sentences in sentence
+	 * @return array
+	 */
+	public function generateSentences($num, $max = 3, $min = 1) {
+		$out = array();
+		for($i=0;$i<$num;$i++) {
+			$out[] = $this->generateRandomSentence($max, $min);;
+		}
+		return $out;
+	}
+
+	/**
 	 * Unique word generator
 	 *
 	 * @param int $max  Maximum number of letters in word
@@ -141,16 +189,6 @@ class twLoremIpsum {
 	}
 
 	/**
-	 * Lists generator
-	 *
-	 * @param int $num  Number of lists to generate
-	 * @return string
-	 */
-	public function generateLists($num) {
-		;
-	}
-
-	/**
 	 * Bytes generator
 	 *
 	 * @param int $num  Number of bytes to generate
@@ -169,9 +207,10 @@ class twLoremIpsum {
 		return trim($out);
 	}
 
-	protected function generateRandomSentence() {
-		$sentences_data = & $this->getSentences();
-		$rand_keys = array_rand($sentences_data['sentences_list'], rand(1, 3));
+	protected function generateRandomSentence($max = 3, $min = 1) {
+		$sentences_data = $this->getSentences();
+		$limit = $this->getRandomLimit($max, $min);
+		$rand_keys = array_rand($sentences_data['sentences_list'], $limit);
 		if (!is_array($rand_keys)) {
 			return $sentences_data['sentences_list'][$rand_keys];
 		}
@@ -184,7 +223,7 @@ class twLoremIpsum {
 	}
 
 	protected function getRandomWord($max, $min, $unique = false, $namespace = null) {
-		$words_data = & $this->getWords();
+		$words_data = $this->getWords();
 		if ($max == 0) {
 			return $this->getRandomWordFromArray($words_data['words_list'], $unique, $namespace);
 		}
@@ -201,7 +240,7 @@ class twLoremIpsum {
 	}
 
 	protected function getRandomWordFromArray($data, $unique, $namespace) {
-		$words_data = & $this->getWords();
+		$words_data = $this->getWords();
 		if ($unique !== true) {
 			$rand_key = array_rand($data, 1);
 			return $words_data['words_list'][$rand_key];
@@ -236,7 +275,17 @@ class twLoremIpsum {
 	}
 
 	protected function loadSentences() {
-		$this->sentences_data = json_decode(file_get_contents(dirname ( __FILE__ ) . '/../data/sentences_data.json'), true);
+		if (is_readable($this->sentences_data_file)) {
+			$source = $this->sentences_data_file;
+		} else {
+			$source = dirname(__FILE__) . '/../data/' . $this->sentences_data_file;
+		}
+
+		if (!is_readable($source)) {
+			throw new Exception(sprintf('%s: Source file %s is not readable!', __METHOD__, $source));
+		}
+
+		$this->sentences_data = json_decode(file_get_contents($source), true);
 	}
 
 	protected function getWords() {
@@ -247,7 +296,17 @@ class twLoremIpsum {
 	}
 
 	protected function loadWords() {
-		$this->words_data = json_decode(file_get_contents(dirname ( __FILE__ ) . '/../data/words_data.json'), true);
+		if (is_readable($this->words_data_file)) {
+			$source = $this->words_data_file;
+		} else {
+			$source = dirname(__FILE__) . '/../data/' . $this->words_data_file;
+		}
+
+		if (!is_readable($source)) {
+			throw new Exception(sprintf('%s: Source file %s is not readable!', __METHOD__, $source));
+		}
+
+		$this->words_data = json_decode(file_get_contents($source), true);
 	}
 }
 ?>
