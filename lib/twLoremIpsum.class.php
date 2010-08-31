@@ -6,7 +6,7 @@
  * @package     twLoremIpsum
  * @subpackage  lib
  * @author      Arkadiusz Tułodziecki
- * @version     SVN: $Id: twLoremIpsum.class.php 3277 2010-08-30 22:15:08Z ldath $
+ * @version     SVN: $Id: twLoremIpsum.class.php 21 2010-08-31 11:02:39Z atulodziecki $
  */
 class twLoremIpsum {
 	static protected $gen_unique_words = array();
@@ -23,7 +23,7 @@ class twLoremIpsum {
 	 * @return string
 	 */
 	public function generateUniqueString($max = 0, $min = 0, $namespace = 'default') {
-		$length = getRandomLimit($max, $min);
+		$length = $this->getRandomLimit($max, $min);
 		return twRandGenerator::getUniqueString($length, $namespace);
 	}
 
@@ -170,36 +170,41 @@ class twLoremIpsum {
 	}
 
 	protected function generateRandomSentence() {
-		$rand_keys = array_rand($this->getSentences()->sentences_list, rand(1, 3));
+		$sentences_data = & $this->getSentences();
+		$rand_keys = array_rand($sentences_data['sentences_list'], rand(1, 3));
 		if (!is_array($rand_keys)) {
-			return $this->getSentences()->sentences_list[$rand_keys];
+			return $sentences_data['sentences_list'][$rand_keys];
 		}
 		$rand_data = array();
 		foreach ($rand_keys as $key) {
-			$rand_data[] = $this->getSentences()->sentences_list[$key];
+			$rand_data[] = $sentences_data['sentences_list'][$key];
 		}
 
 		return implode(', ',$rand_data);
 	}
 
 	protected function getRandomWord($max, $min, $unique = false, $namespace = null) {
+		$words_data = & $this->getWords();
 		if ($max == 0) {
-			return $this->getRandomWordFromArray($this->getWords()->words_list, $unique, $namespace);
+			return $this->getRandomWordFromArray($words_data['words_list'], $unique, $namespace);
 		}
 		if ($min > $max) {
 			throw new Exception(sprintf('%s: min value can\'t be bigger then max value', __METHOD__));
 		}
 		$sum_array = array();
 		for($i=$min;$i<=$max;$i++) {
-			$sum_array = array_merge($sum_array, array_values($this->getWords()->words_for_len->$i));
+			if (isset($words_data['words_for_len'][$i])) {
+				$sum_array = array_merge($sum_array, array_values($words_data['words_for_len'][$i]));
+			}
 		}
 		return $this->getRandomWordFromArray(array_flip($sum_array), $unique, $namespace);;
 	}
 
 	protected function getRandomWordFromArray($data, $unique, $namespace) {
+		$words_data = & $this->getWords();
 		if ($unique !== true) {
 			$rand_key = array_rand($data, 1);
-			return $this->getWords()->words_list[$rand_key];
+			return $words_data['words_list'][$rand_key];
 		} else {
 			if (!isset(self::$gen_unique_words[$namespace])) {
 				self::$gen_unique_words[$namespace] = array();
@@ -211,7 +216,7 @@ class twLoremIpsum {
 				}
 			} while (in_array($rand_key, self::$gen_unique_words[$namespace]));
 			self::$gen_unique_words[$namespace][] = $rand_key;
-			return $this->getWords()->words_list[$rand_key];
+			return $words_data['words_list'][$rand_key];
 		}
 	}
 
@@ -231,7 +236,7 @@ class twLoremIpsum {
 	}
 
 	protected function loadSentences() {
-		$this->sentences_data = json_decode(file_get_contents(dirname ( __FILE__ ) . '/../data/sentences_data.json'));
+		$this->sentences_data = json_decode(file_get_contents(dirname ( __FILE__ ) . '/../data/sentences_data.json'), true);
 	}
 
 	protected function getWords() {
@@ -242,7 +247,7 @@ class twLoremIpsum {
 	}
 
 	protected function loadWords() {
-		$this->words_data = json_decode(file_get_contents(dirname ( __FILE__ ) . '/../data/words_data.json'));
+		$this->words_data = json_decode(file_get_contents(dirname ( __FILE__ ) . '/../data/words_data.json'), true);
 	}
 }
 ?>
