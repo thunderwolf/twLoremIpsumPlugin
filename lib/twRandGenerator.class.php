@@ -5,7 +5,7 @@
  * @package     twLoremIpsum
  * @subpackage  lib
  * @author      Arkadiusz Tułodziecki
- * @version     SVN: $Id: twRandGenerator.class.php 3287 2010-09-01 07:39:44Z ldath $
+ * @version     SVN: $Id: twRandGenerator.class.php 3291 2010-09-01 22:55:02Z ldath $
  */
 class twRandGenerator {
 	static protected $gen_unique_strings = array();
@@ -38,7 +38,7 @@ class twRandGenerator {
 
 	static public function getRandomLimit($range) {
 		if ($range[0] > $range[1] && $range[0] > 0) {
-			return rand($range[0], $range[1]);
+			return mt_rand($range[0], $range[1]);
 		} else {
 			return $range[1];
 		}

@@ -6,10 +6,12 @@
  * @package     twLoremIpsum
  * @subpackage  lib
  * @author      Arkadiusz Tułodziecki
- * @version     SVN: $Id: twLoremIpsum.class.php 3287 2010-09-01 07:39:44Z ldath $
+ * @author      Tomasz Ducin <tomasz.ducin@gmail.com> (Some methods are from tdRandomDataGenerator)
+ * @version     SVN: $Id: twLoremIpsum.class.php 3291 2010-09-01 22:55:02Z ldath $
  */
 class twLoremIpsum {
 	static protected $gen_unique_words = array();
+	static protected $gen_unique_emails = array();
 
 	protected $sentences_data = null;
 	protected $words_data = null;
@@ -18,12 +20,35 @@ class twLoremIpsum {
 	protected $words_data_file = 'words_data.json';
 
 	/**
+	 * All digits and letters.
+	 *
+	 * @var string
+	 */
+	protected $alphanumeric = "0123456789abcdefghijklmnopqrstuvwxyz";
+
+	/**
+	 * Some sample top level domains.
+	 *
+	 * @var array
+	 */
+	protected $tlds = array("com", "net", "gov");
+
+	/**
 	 * Optional source file with sentences data
 	 *
 	 * @param string $file  Name of file in plugin data folder or full path to file
 	 */
 	public function setSentencesSourceFile($file) {
 		$this->sentences_data_file = $file;
+	}
+
+	/**
+	 * Change tlds to your own set
+	 *
+	 * @param array $tlds
+	 */
+	public function setTlds($tlds) {
+		$this->tlds = $tlds;
 	}
 
 	/**
@@ -36,55 +61,13 @@ class twLoremIpsum {
 	}
 
 	/**
-	 * Unique String generator
-	 *
-	 * @param mixed $length  Length of string if int or range of length to randomly select if array($min, $max)
-	 * @param string $namespace  Optional namespace to separate unique generator lists
-	 * @return string
-	 */
-	public function generateUniqueString($length = 0, $namespace = 'default') {
-		if (is_array($length)) {
-			$length = twRandGenerator::getRandomLimit($length);
-		}
-		return twRandGenerator::getUniqueString($length, $namespace);
-	}
-
-	/**
-	 * Unique Strings generator
-	 *
-	 * @param int $num  Number of strings to generate
-	 * @param mixed $length  Length of string if int or range of length to randomly select if array($min, $max)
-	 * @param string $namespace  Optional namespace to separate unique generator lists
-	 * @return array
-	 */
-	public function generateUniqueStrings($num, $length = 0, $namespace = 'default') {
-		$out = array();
-
-		$change_lenght = false;
-		if (is_array($length)) {
-			$change_lenght = true;
-		}
-
-		if ($change_lenght === true) {
-			for($i=0;$i<$num;$i++) {
-				$out[] = twRandGenerator::getUniqueString(twRandGenerator::getRandomLimit($length), $namespace);
-			}
-		} else {
-			for($i=0;$i<$num;$i++) {
-				$out[] = twRandGenerator::getUniqueString($length, $namespace);
-			}
-		}
-		return $out;
-	}
-
-	/**
 	 * Paragraph generator
 	 *
 	 * @param mixed $length  Number of sentences in paragraph if int or number of sentences to randomly select if array($min, $max)
 	 * @return string
 	 */
 	public function generateParagraph($length = 10) {
-		return $this->generateRandomParagraph($length);
+		return $this->getRandomParagraph($length);
 	}
 
 	/**
@@ -97,7 +80,7 @@ class twLoremIpsum {
 	public function generateParagraphs($num, $length = 10) {
 		$out = array();
 		for($i=0;$i<$num;$i++) {
-			$out[] = $this->generateRandomParagraph($length);
+			$out[] = $this->getRandomParagraph($length);
 		}
 		return $out;
 	}
@@ -109,7 +92,7 @@ class twLoremIpsum {
 	 * @return string
 	 */
 	public function generateSentence($length = array(1, 3)) {
-		return $this->generateRandomSentence($length);
+		return $this->getRandomSentence($length);
 	}
 
 	/**
@@ -122,7 +105,7 @@ class twLoremIpsum {
 	public function generateSentences($num, $length = array(1, 3)) {
 		$out = array();
 		for($i=0;$i<$num;$i++) {
-			$out[] = $this->generateRandomSentence($length);
+			$out[] = $this->getRandomSentence($length);
 		}
 		return $out;
 	}
@@ -179,18 +162,114 @@ class twLoremIpsum {
 		return $out;
 	}
 
-	protected function generateRandomParagraph($limit) {
+	/**
+	 * Unique String generator
+	 *
+	 * @param mixed $length  Length of string if int or range of length to randomly select if array($min, $max)
+	 * @param string $namespace  Optional namespace to separate unique generator lists
+	 * @return string
+	 */
+	public function generateUniqueString($length = 0, $namespace = 'default') {
+		if (is_array($length)) {
+			$length = twRandGenerator::getRandomLimit($length);
+		}
+		return twRandGenerator::getUniqueString($length, $namespace);
+	}
+
+	/**
+	 * Unique Strings generator
+	 *
+	 * @param int $num  Number of strings to generate
+	 * @param mixed $length  Length of string if int or range of length to randomly select if array($min, $max)
+	 * @param string $namespace  Optional namespace to separate unique generator lists
+	 * @return array
+	 */
+	public function generateUniqueStrings($num, $length = 0, $namespace = 'default') {
+		$out = array();
+
+		$change_lenght = false;
+		if (is_array($length)) {
+			$change_lenght = true;
+		}
+
+		if ($change_lenght === true) {
+			for($i=0;$i<$num;$i++) {
+				$out[] = twRandGenerator::getUniqueString(twRandGenerator::getRandomLimit($length), $namespace);
+			}
+		} else {
+			for($i=0;$i<$num;$i++) {
+				$out[] = twRandGenerator::getUniqueString($length, $namespace);
+			}
+		}
+		return $out;
+	}
+
+	/**
+	 * Generates random E-mail address.
+	 *
+	 * @return string generated E-mail address.
+	 */
+	public function generateRandomEmail() {
+		// TODO: option to generate emails based on user name or words. In this moment only Rand sets of letters avaiable
+		return $this->getRandomEmail();
+	}
+
+	/**
+	 * Generates unique E-mail address.
+	 *
+	 * @return string generated E-mail address.
+	 */
+	public function generateUniqueEmail($namespace = 'default') {
+		// TODO: option to generate emails based on user name or words. In this moment only Rand sets of letters avaiable
+		// TODO: if email based on user name or words remember to setup some security in do -> while
+		do {
+			$email = $this->getRandomEmail();
+		} while (in_array($email, self::$gen_unique_emails[$namespace]));
+		return $email;
+	}
+
+	/**
+	 * Generates random HTTP address.
+	 *
+	 * @return string generated HTTP address.
+	 */
+	public function generateRandomHttp() {
+		// TODO: option to generate url's based on words. In this moment only Rand sets of letters avaiable
+		return $this->getRandomHttp();
+	}
+
+	/**
+	 * Generates random IP address.
+	 *
+	 * @return string IP address.
+	 */
+	public function generateRandomIP() {
+		// TODO: possibility to generate pools of IP's
+		return $this->getRandomIP();
+	}
+
+	/**
+	 * Generates random created_at (timestampable) value.
+	 *
+	 * @param integer $year year of the timestamp
+	 * @return string created_at as a string
+	 */
+	public function generateRandomCreatedAt($year) {
+		return $this->getRandomCreatedAt($year);
+	}
+
+	protected function getRandomParagraph($limit) {
 		if (is_array($limit)) {
 			$limit = twRandGenerator::getRandomLimit($limit);
 		}
 		$out = '';
 		for($i=0;$i<$limit;$i++) {
-			$out .= ucfirst($this->generateRandomSentence(array(1, 3))).'. ';
+			$out .= ucfirst($this->getRandomSentence(array(1, 3))).'. ';
 		}
 		return trim($out);
 	}
 
-	protected function generateRandomSentence($limit) {
+	protected function getRandomSentence($limit) {
 		$sentences_data = $this->getSentences();
 		if (is_array($limit)) {
 			$limit = twRandGenerator::getRandomLimit($limit);
@@ -250,6 +329,38 @@ class twLoremIpsum {
 			$this->loadSentences();
 		}
 		return $this->sentences_data;
+	}
+
+	protected function getRandomEmail() {
+		$ulen = mt_rand(3, 8);
+		$dlen = mt_rand(6, 15);
+		$result = "";
+		for($i = 1; $i <= $ulen; $i++)
+			$result .= substr($this->alphanumeric, mt_rand(0, strlen($this->alphanumeric)), 1);
+		$result .= "@";
+		for($i = 1; $i <= $dlen; $i++)
+			$result .= substr($this->alphanumeric, mt_rand(0, strlen($this->alphanumeric)), 1);
+		$result .= ".";
+		$result .= $this->tlds[mt_rand(0, (sizeof($this->tlds) - 1))];
+		return $result;
+	}
+
+	protected function getRandomHttp() {
+		$ulen = mt_rand(3, 8);
+		$result = "www.";
+		for($i = 1; $i <= $ulen; $i++)
+			$result .= substr($this->alphanumeric, mt_rand(0, strlen($this->alphanumeric)), 1);
+		$result .= ".";
+		$result .= $this->tlds[mt_rand(0, (sizeof($this->tlds) - 1))];
+		return $result;
+	}
+
+	protected function getRandomIP() {
+		return mt_rand(0, 255) . '.' . mt_rand(0, 255) . '.' . mt_rand(0, 255) . '.' . mt_rand(0, 255);
+	}
+
+	protected function getRandomCreatedAt($year) {
+		return '\'' . $year . '-' . sprintf("%02d", mt_rand(1, 12)) . '-' . sprintf("%02d", mt_rand(1, 28)) . ' ' . sprintf("%02d", mt_rand(0, 23)) . ':' . sprintf("%02d", mt_rand(0, 59)) . ':' . sprintf("%02d", mt_rand(0, 59)) . '\'';
 	}
 
 	protected function loadSentences() {
