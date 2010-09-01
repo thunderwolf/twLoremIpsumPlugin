@@ -23,7 +23,7 @@ And in Template:
 Generating 1000 unique strings with string lenght changes from 5 to 10
 
         $loremipsum = new twLoremIpsum();
-        $this->mystring = $loremipsum->generateUniqueStrings(1000, $max_len = 10, $min_len = 5);
+        $this->mystring = $loremipsum->generateUniqueStrings(1000, array(5, 10));
 
 And in Template:
 

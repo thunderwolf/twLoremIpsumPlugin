@@ -6,7 +6,7 @@
  * @package     twLoremIpsum
  * @subpackage  lib
  * @author      Arkadiusz Tułodziecki
- * @version     SVN: $Id: twLoremIpsum.class.php 21 2010-08-31 11:02:39Z atulodziecki $
+ * @version     SVN: $Id: twLoremIpsum.class.php 3287 2010-09-01 07:39:44Z ldath $
  */
 class twLoremIpsum {
 	static protected $gen_unique_words = array();
@@ -38,13 +38,14 @@ class twLoremIpsum {
 	/**
 	 * Unique String generator
 	 *
-	 * @param int $max  Maximum string lengtht
-	 * @param int $min  Minimum string lengtht
+	 * @param mixed $length  Length of string if int or range of length to randomly select if array($min, $max)
 	 * @param string $namespace  Optional namespace to separate unique generator lists
 	 * @return string
 	 */
-	public function generateUniqueString($max = 0, $min = 0, $namespace = 'default') {
-		$length = $this->getRandomLimit($max, $min);
+	public function generateUniqueString($length = 0, $namespace = 'default') {
+		if (is_array($length)) {
+			$length = twRandGenerator::getRandomLimit($length);
+		}
 		return twRandGenerator::getUniqueString($length, $namespace);
 	}
 
@@ -52,23 +53,21 @@ class twLoremIpsum {
 	 * Unique Strings generator
 	 *
 	 * @param int $num  Number of strings to generate
-	 * @param int $max  Maximum string lengtht
-	 * @param int $min  Minimum string lengtht
+	 * @param mixed $length  Length of string if int or range of length to randomly select if array($min, $max)
 	 * @param string $namespace  Optional namespace to separate unique generator lists
 	 * @return array
 	 */
-	public function generateUniqueStrings($num, $max = 0, $min = 0, $namespace = 'default') {
+	public function generateUniqueStrings($num, $length = 0, $namespace = 'default') {
 		$out = array();
-		$length = $max;
 
 		$change_lenght = false;
-		if ($min > $max && $min > 0) {
+		if (is_array($length)) {
 			$change_lenght = true;
 		}
 
 		if ($change_lenght === true) {
 			for($i=0;$i<$num;$i++) {
-				$out[] = twRandGenerator::getUniqueString(rand($min, $max), $namespace);
+				$out[] = twRandGenerator::getUniqueString(twRandGenerator::getRandomLimit($length), $namespace);
 			}
 		} else {
 			for($i=0;$i<$num;$i++) {
@@ -81,26 +80,24 @@ class twLoremIpsum {
 	/**
 	 * Paragraph generator
 	 *
-	 * @param int $max  Maximum number of sentences in paragraph
-	 * @param int $min  Minimum number of sentences in paragraph
+	 * @param mixed $length  Number of sentences in paragraph if int or number of sentences to randomly select if array($min, $max)
 	 * @return string
 	 */
-	public function generateParagraph($max = 10, $min = 0) {
-		return $this->generateRandomParagraph($max, $min);
+	public function generateParagraph($length = 10) {
+		return $this->generateRandomParagraph($length);
 	}
 
 	/**
 	 * Paragraphs generator
 	 *
 	 * @param int $num  Number of paragraps to generate
-	 * @param int $max  Maximum number of sentences in paragraph
-	 * @param int $min  Minimum number of sentences in paragraph
+	 * @param mixed $length  Number of sentences in paragraph if int or number of sentences to randomly select if array($min, $max)
 	 * @return array
 	 */
-	public function generateParagraphs($num, $max = 10, $min = 0) {
+	public function generateParagraphs($num, $length = 10) {
 		$out = array();
 		for($i=0;$i<$num;$i++) {
-			$out[] = $this->generateRandomParagraph($max, $min);
+			$out[] = $this->generateRandomParagraph($length);
 		}
 		return $out;
 	}
@@ -108,26 +105,24 @@ class twLoremIpsum {
 	/**
 	 * Sentence generator
 	 *
-	 * @param int $max  Maximum number of sub sentences in sentence
-	 * @param int $min  Minimum number of sub sentences in sentence
+	 * @param mixed $length  Number of sub sentences in sentence if int or number of sub sentences in sentence to randomly select if array($min, $max)
 	 * @return string
 	 */
-	public function generateSentence($max = 3, $min = 1) {
-		return $this->generateRandomSentence($max, $min);
+	public function generateSentence($length = array(1, 3)) {
+		return $this->generateRandomSentence($length);
 	}
 
 	/**
 	 * Sentences generator
 	 *
 	 * @param int $num  Number of sentenes to generate
-	 * @param int $max  Maximum number of sub sentences in sentence
-	 * @param int $min  Minimum number of sub sentences in sentence
+	 * @param mixed $length  Number of sub sentences in sentence if int or number of sub sentences in sentence to randomly select if array($min, $max)
 	 * @return array
 	 */
-	public function generateSentences($num, $max = 3, $min = 1) {
+	public function generateSentences($num, $length = array(1, 3)) {
 		$out = array();
 		for($i=0;$i<$num;$i++) {
-			$out[] = $this->generateRandomSentence($max, $min);;
+			$out[] = $this->generateRandomSentence($length);
 		}
 		return $out;
 	}
@@ -135,28 +130,26 @@ class twLoremIpsum {
 	/**
 	 * Unique word generator
 	 *
-	 * @param int $max  Maximum number of letters in word
-	 * @param int $min  Minimum number of letters in word
+	 * @param mixed $length  Minimum number of letters in word if int or number of letters in word to randomly select if array($min, $max)
 	 * @param string $namespace  Optional namespace to separate unique generator lists
 	 * @return string
 	 */
-	public function generateUniqueWord($max = 10, $min = 0, $namespace = 'default') {
-		return $this->getRandomWord($max, $min, true, $namespace);
+	public function generateUniqueWord($length = 10, $namespace = 'default') {
+		return $this->getRandomWord($length, true, $namespace);
 	}
 
 	/**
 	 * Unique words generator
 	 *
 	 * @param int $num  Number of words to generate
-	 * @param int $max  Maximum number of letters in word
-	 * @param int $min  Minimum number of letters in word
+	 * @param mixed $length  Minimum number of letters in word if int or number of letters in word to randomly select if array($min, $max)
 	 * @param string $namespace  Optional namespace to separate unique generator lists
 	 * @return array
 	 */
-	public function generateUniqueWords($num, $max = 10, $min = 0, $namespace = 'default') {
+	public function generateUniqueWords($num, $length = 10, $namespace = 'default') {
 		$out = array();
 		for($i=0;$i<$num;$i++) {
-			$out[] = $this->getRandomWord($max, $min, true, $namespace);
+			$out[] = $this->getRandomWord($length, true, $namespace);
 		}
 		return $out;
 	}
@@ -164,52 +157,44 @@ class twLoremIpsum {
 	/**
 	 * Word generator
 	 *
-	 * @param int $max  Maximum number of letters in word
-	 * @param int $min  Minimum number of letters in word
+	 * @param mixed $length  Minimum number of letters in word if int or number of letters in word to randomly select if array($min, $max)
 	 * @return string
 	 */
-	public function generateWord($max = 10, $min = 0) {
-		return $this->getRandomWord($max, $min);
+	public function generateWord($length = 10) {
+		return $this->getRandomWord($length);
 	}
 
 	/**
 	 * Words generator
 	 *
 	 * @param int $num  Number of words to generate
-	 * @param int $max  Maximum number of letters in word
-	 * @param int $min  Minimum number of letters in word
+	 * @param mixed $length  Minimum number of letters in word if int or number of letters in word to randomly select if array($min, $max)
 	 * @return array
 	 */
-	public function generateWords($num, $max = 10, $min = 0) {
+	public function generateWords($num, $length = 10) {
 		$out = array();
 		for($i=0;$i<$num;$i++) {
-			$out[] = $this->getRandomWord($max, $min);
+			$out[] = $this->getRandomWord($length);
 		}
 		return $out;
 	}
 
-	/**
-	 * Bytes generator
-	 *
-	 * @param int $num  Number of bytes to generate
-	 * @return string
-	 */
-	public function generateBytes($num) {
-		;
-	}
-
-	protected function generateRandomParagraph($max, $min) {
-		$limit = $this->getRandomLimit($max, $min);
+	protected function generateRandomParagraph($limit) {
+		if (is_array($limit)) {
+			$limit = twRandGenerator::getRandomLimit($limit);
+		}
 		$out = '';
 		for($i=0;$i<$limit;$i++) {
-			$out .= ucfirst($this->generateRandomSentence()).'. ';
+			$out .= ucfirst($this->generateRandomSentence(array(1, 3))).'. ';
 		}
 		return trim($out);
 	}
 
-	protected function generateRandomSentence($max = 3, $min = 1) {
+	protected function generateRandomSentence($limit) {
 		$sentences_data = $this->getSentences();
-		$limit = $this->getRandomLimit($max, $min);
+		if (is_array($limit)) {
+			$limit = twRandGenerator::getRandomLimit($limit);
+		}
 		$rand_keys = array_rand($sentences_data['sentences_list'], $limit);
 		if (!is_array($rand_keys)) {
 			return $sentences_data['sentences_list'][$rand_keys];
@@ -222,13 +207,14 @@ class twLoremIpsum {
 		return implode(', ',$rand_data);
 	}
 
-	protected function getRandomWord($max, $min, $unique = false, $namespace = null) {
+	protected function getRandomWord($length, $unique = false, $namespace = null) {
 		$words_data = $this->getWords();
-		if ($max == 0) {
+		if ($length == 0) {
 			return $this->getRandomWordFromArray($words_data['words_list'], $unique, $namespace);
 		}
-		if ($min > $max) {
-			throw new Exception(sprintf('%s: min value can\'t be bigger then max value', __METHOD__));
+		if (is_array($length)) {
+			$min = $length[0];
+			$max = $length[1];
 		}
 		$sum_array = array();
 		for($i=$min;$i<=$max;$i++) {
@@ -256,14 +242,6 @@ class twLoremIpsum {
 			} while (in_array($rand_key, self::$gen_unique_words[$namespace]));
 			self::$gen_unique_words[$namespace][] = $rand_key;
 			return $words_data['words_list'][$rand_key];
-		}
-	}
-
-	protected function getRandomLimit($max, $min) {
-		if ($min > $max && $min > 0) {
-			return rand($min, $max);
-		} else {
-			return $max;
 		}
 	}
 
@@ -309,4 +287,3 @@ class twLoremIpsum {
 		$this->words_data = json_decode(file_get_contents($source), true);
 	}
 }
-?>

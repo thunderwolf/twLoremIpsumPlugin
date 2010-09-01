@@ -5,12 +5,12 @@
  * @package     twLoremIpsum
  * @subpackage  lib
  * @author      Arkadiusz Tułodziecki
- * @version     SVN: $Id: twRandGenerator.class.php 3277 2010-08-30 22:15:08Z ldath $
+ * @version     SVN: $Id: twRandGenerator.class.php 3287 2010-09-01 07:39:44Z ldath $
  */
 class twRandGenerator {
 	static protected $gen_unique_strings = array();
 
-	public static function getUniqueString($length = 0, $namespace = 'default') {
+	static public function getUniqueString($length = 0, $namespace = 'default') {
 		if ($length > 40) {
 			throw new Exception(sprintf('%s: max length = `%d`', __METHOD__, 40));
 		}
@@ -35,6 +35,13 @@ class twRandGenerator {
 		self::$gen_unique_strings[$namespace][] = $string;
 		return $string;
 	}
-}
 
-?>
+	static public function getRandomLimit($range) {
+		if ($range[0] > $range[1] && $range[0] > 0) {
+			return rand($range[0], $range[1]);
+		} else {
+			return $range[1];
+		}
+	}
+
+}
