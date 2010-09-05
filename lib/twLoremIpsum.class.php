@@ -7,7 +7,7 @@
  * @subpackage  lib
  * @author      Arkadiusz Tułodziecki
  * @author      Tomasz Ducin <tomasz.ducin@gmail.com> (Some methods are from tdRandomDataGenerator)
- * @version     SVN: $Id: twLoremIpsum.class.php 3291 2010-09-01 22:55:02Z ldath $
+ * @version     SVN: $Id: twLoremIpsum.class.php 3317 2010-09-05 12:40:23Z ldath $
  */
 class twLoremIpsum {
 	static protected $gen_unique_words = array();
@@ -113,7 +113,7 @@ class twLoremIpsum {
 	/**
 	 * Unique word generator
 	 *
-	 * @param mixed $length  Minimum number of letters in word if int or number of letters in word to randomly select if array($min, $max)
+	 * @param mixed $length  Number of letters in word if int or number of letters in word to randomly select if array($min, $max)
 	 * @param string $namespace  Optional namespace to separate unique generator lists
 	 * @return string
 	 */
@@ -125,7 +125,7 @@ class twLoremIpsum {
 	 * Unique words generator
 	 *
 	 * @param int $num  Number of words to generate
-	 * @param mixed $length  Minimum number of letters in word if int or number of letters in word to randomly select if array($min, $max)
+	 * @param mixed $length  Number of letters in word if int or number of letters in word to randomly select if array($min, $max)
 	 * @param string $namespace  Optional namespace to separate unique generator lists
 	 * @return array
 	 */
@@ -140,7 +140,7 @@ class twLoremIpsum {
 	/**
 	 * Word generator
 	 *
-	 * @param mixed $length  Minimum number of letters in word if int or number of letters in word to randomly select if array($min, $max)
+	 * @param mixed $length  Number of letters in word if int or number of letters in word to randomly select if array($min, $max)
 	 * @return string
 	 */
 	public function generateWord($length = 10) {
@@ -151,7 +151,7 @@ class twLoremIpsum {
 	 * Words generator
 	 *
 	 * @param int $num  Number of words to generate
-	 * @param mixed $length  Minimum number of letters in word if int or number of letters in word to randomly select if array($min, $max)
+	 * @param mixed $length  Number of letters in word if int or number of letters in word to randomly select if array($min, $max)
 	 * @return array
 	 */
 	public function generateWords($num, $length = 10) {

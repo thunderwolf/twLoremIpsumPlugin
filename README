@@ -5,34 +5,195 @@ False data generator with more-or-less normal distribution of letters
 
 When it is necessary to generate test data for performance testing, or if you need to generate data for presentation purposes this plugin can be helpful.
 
-Example
--------
+Instalation
+-----------
 
-Generating 10 paragraphs
+	symfony plugin:install twLoremIpsumPlugin -s beta
 
-        $loremipsum = new twLoremIpsum();
-        $this->paragraphs = $loremipsum->generateParagraphs(10);
 
-And in Template:
+Configuration
+-------------
 
-        <?php foreach($paragraphs as $paragraph): ?>
-        <p><?php echo $paragraph ?></p>
-        <?php endforeach;?>
+By default plugin uses own library of words and sentences fragments saved in json format. This files are:
 
+*   __sentences_data.json__ - Standard Lorem Ipsum and other Latin frazes.
+
+*   __words_data.json__ - Sets of Latin words
+  
+This dictionary files are not to big and if for generation purposes bigger sets of data is needed - Special task to generate this kind of files is added to dis plugin.
+
+For example with plugin you have files based of polish translattion of Homer Iliada book:
+
+*   __pl_homer_sentences_data.json__
+
+*   __pl_homer_words_data.json__
+
+### How to generate own dictionary files ###
+
+#### Generating sentences file ####
+
+	symfony loremipsum:sentences-generator [--nonumeric[="..."]] source output
+>**Note**
+> * Where optional __--nonumeric__ gives information about possibility of numbers inside of sentences like:
+>> There is 2 tree's in this garden.
+
+#### Generating words file ####
+
+	symfony loremipsum:words-generator [--nonumeric[="..."]] [--regex[="..."]] source output
+>**Note**
+> * Where optional __--nonumeric__ gives information about possibility to use numbers as word in dictionary and optional __--regex__ to add own filter for words
+
+### How to use own dictionary files ###
+
+The fastes way is to put dictionary files to data folder of twLoremIpsumPlugin.
+
+### Setting sentences source file ###
+
+	$loremipsum = new twLoremIpsum();
+	$loremipsum->setSentencesSourceFile('my_sentences_data.json')
+	
+### Setting words source file ###
+
+	$loremipsum = new twLoremIpsum();
+	$loremipsum->setWordsSourceFile('my_sentences_data.json')
+
+## How to use own set's of TLDS for URI generator ##
+
+	$mytlds = array('com', 'net', 'gov', 'com.pl', 'pl', 'org');
+	$loremipsum = new twLoremIpsum();
+	$loremipsum->setTlds($mytlds)
+
+Usage
+-----
+
+Best way to explain usability of this plugin is lots of examples. Plugin can be useful in __task's__ and in __modules__.
+
+### Generating paragraphs ###
+
+For Generating paragraphs we have 2 methods
+
+*   __generateParagraph($length = 10)__ - Where __$length__ is mixed number of sentences
+>**Note**
+> * Number of sentences in paragraph: if int or number of sentences to randomly select if array($min, $max)
+> * Returns string with paragraph
+
+*   __generateParagraphs($num, $length = 10)__ - Where __$num__ is number of paragraphs to genearte and  __$length__ is mixed number of sentences in paragraphs
+>**Note**
+> * Number of sentences in paragraph: if int or number of sentences to randomly select if array($min, $max)
+> * Returns array with paragraphs
+
+#### Exaples ####
+
+If we need to generate paragraph by with sentences betwean 3 to 10
+
+	$loremipsum = new twLoremIpsum();
+	$sentence = $loremipsum->generateParagraph(array(3, 10));
+
+If we need to generate 10 paragraphs by default with sentences betwean 4 to 9 per paragraph
+
+	$loremipsum = new twLoremIpsum();
+	$sentences = $loremipsum->generateParagraphs(10, array(4, 9);
+	
+### Generating sentences ###
+
+For Generating sentences we have 2 methods
+
+*   __generateSentence($length = array(1, 3))__ - Where __$length__ is mixed number of sentences fragments seperated by __,__
+>**Note**
+> * Number of sub sentences in sentence: if int or number of sub sentences in sentence to randomly select if array($min, $max)
+> * Returns string with sentence
+
+*   __generateSentences($num, $length = array(1, 3))__ - Where __$num__ is number of sentences to genearte and __$length__ is mixed number of sentences fragments seperated by __,__
+>**Note**
+> * Number of sub sentences in sentence: if int or number of sub sentences in sentence to randomly select if array($min, $max)
+> * Returns array with sentences
+
+#### Exaples ####
+
+If we need to generate sentence with 1 to 5 sentences fragments
+
+	$loremipsum = new twLoremIpsum();
+	$sentence = $loremipsum->generateSentence(array(1, 5));
+
+If we need to generate 20 sentences with 2 to 4 sentences fragments
+
+	$loremipsum = new twLoremIpsum();
+	$sentences = $loremipsum->generateSentences(20, array(2, 4));
+
+### Generating words ###
+
+For Generating words we have 4 methods
+
+*   __generateUniqueWord($length = 10, $namespace = 'default')__ - Where __$length__ is mixed number of chars in word and __$namespace__ is use for contener with used words to preserve uniq generation
+>**Note**
+> * Number of letters in word: if int or number of letters in word to randomly select if array($min, $max)
+> * There is allways limit of unique words. If this limit will be reached __Exception__ will be generated
+> * Returns string with word
+
+*   __generateUniqueWords($num, $length = 10, $namespace = 'default')__ - Where __$num__ is number of words to genearte and __$length__ is mixed number of chars in word and __$namespace__ is use for contener with used words to preserve uniq generation
+>**Note**
+> * Number of letters in word: if int or number of letters in word to randomly select if array($min, $max)
+> * There is allways limit of unique words. If this limit will be reached __Exception__ will be generated
+> * Returns array with words
+
+*   __generateWord($length = 10)__ - Works almoust the same like __generateUniqueWord__ but not checking if word was used
+
+*   __generateWords($num, $length = 10)__ - Works almoust the same like __generateUniqueWords__ but not checking if word was used
+
+#### Exaples ####
+
+We need to generate 200 unique users with names betwean 5 to 20 letters in namespace users
+
+	$loremipsum = new twLoremIpsum();
+	$users = $loremipsum->generateUniqueWords(200, array(5, 20), 'users');
+
+### Generating unique strings ###
+
+For Generating random unique strings we have 2 methods
+
+*   __generateUniqueString($length = 0, $namespace = 'default')__ - Where __$length__ is mixed number of chars in string and __$namespace__ is use for contener with used strings to preserve uniq generation
+>**Note**
+> * Number of chars in string: if int or range of length to randomly select if array($min, $max)
+> * There is allways limit of unique string based on length. But if string have more then 8 chars then is hard to generate __Exception__ for limit reached
+> * Returns string 
+
+*   __generateUniqueStrings($num, $length = 0, $namespace = 'default')__ - Where __$num__ is number of strings to genearte and __$length__ is mixed number of chars in string and __$namespace__ is use for contener with used strings to preserve uniq generation
+>**Note**
+> * Number of chars in string: if int or range of length to randomly select if array($min, $max)
+> * There is allways limit of unique string based on length. But if string have more then 8 chars then is hard to generate __Exception__ for limit reached
+> * Returns array of strings 
+
+#### Examples ####
 
 Generating 1000 unique strings with string lenght changes from 5 to 10
 
-        $loremipsum = new twLoremIpsum();
-        $this->mystring = $loremipsum->generateUniqueStrings(1000, array(5, 10));
+	$loremipsum = new twLoremIpsum();
+	$this->mystring = $loremipsum->generateUniqueStrings(1000, array(5, 10));
 
-And in Template:
+### Generating random emails ###
 
-        <?php foreach($mystring as $string): ?>
-        <p><?php echo $string ?></p>
-        <?php endforeach;?>
+For Generating random emails we have 2 methods
 
+*   __generateRandomEmail()__ 
+
+*   __generateUniqueEmail($namespace = 'default')__
+
+
+### Generating random http links ###
+
+*   __generateRandomHttp()__
+
+### Generating random IP address ###
+
+*   __generateRandomIP()__
+
+### Generating random created_at (timestampable) value ###
+
+*   __generateRandomCreatedAt($year)__
 
 TODO
 ----
-  * Better and complete documentation
   * Bytes generator - generating setup number of bytes
+  * Option to generate emails based on user name or words. In this moment only Rand sets of letters avaiable
+  * Option to generate url's based on words. In this moment only Rand sets of letters avaiable
+  * Better IP's generator

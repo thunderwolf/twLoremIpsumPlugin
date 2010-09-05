@@ -6,7 +6,7 @@
  * @package     twLoremParser
  * @subpackage  lib
  * @author      Arkadiusz Tułodziecki
- * @version     SVN: $Id$
+ * @version     SVN: $Id: twLoremParser.class.php 3298 2010-09-03 23:45:56Z ldath $
  */
 class twLoremParser {
 
