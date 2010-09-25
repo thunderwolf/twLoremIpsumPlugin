@@ -7,7 +7,6 @@
  * @subpackage  lib
  * @author      Arkadiusz Tułodziecki
  * @author      Tomasz Ducin <tomasz.ducin@gmail.com> (Some methods are from tdRandomDataGenerator)
- * @version     SVN: $Id: twLoremIpsum.class.php 3317 2010-09-05 12:40:23Z ldath $
  */
 class twLoremIpsum {
 	static protected $gen_unique_words = array();

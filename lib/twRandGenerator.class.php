@@ -5,7 +5,6 @@
  * @package     twLoremIpsum
  * @subpackage  lib
  * @author      Arkadiusz Tułodziecki
- * @version     SVN: $Id: twRandGenerator.class.php 3291 2010-09-01 22:55:02Z ldath $
  */
 class twRandGenerator {
 	static protected $gen_unique_strings = array();

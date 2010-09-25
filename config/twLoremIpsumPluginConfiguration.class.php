@@ -2,11 +2,10 @@
 
 /**
  * twLoremIpsumPlugin configuration.
- * 
+ *
  * @package     twLoremIpsumPlugin
  * @subpackage  config
  * @author      Arkadiusz Tułodziecki
- * @version     SVN: $Id: twLoremIpsumPluginConfiguration.class.php 3251 2010-08-28 13:28:33Z ldath $
  */
 class twLoremIpsumPluginConfiguration extends sfPluginConfiguration
 {
