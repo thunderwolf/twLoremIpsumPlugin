@@ -1,0 +1,3 @@
+[submodule "lib/vendor/LoremIpsum"]
+	path = lib/vendor/LoremIpsum
+	url = git@github.com:ldath/LoremIpsum.git
